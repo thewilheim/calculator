@@ -5,7 +5,10 @@ let secondOperand = '';
 
 let currentOperation = null;
 
-let operationPreform = false;
+
+
+const equal = document.getElementById("equals");
+const clearBtn = document.getElementById("clearAll");
 
 
 const operatorBtn = document.querySelectorAll("[data-operator]");
@@ -23,37 +26,43 @@ numberBtn.forEach((button) =>
 
     function addNumber(a) {
 
-        if (currentScreenNumber.innerHTML === '0') {   
+        if (currentScreenNumber.innerHTML === '0' || operationPreform === true) {   
 
         resetDisplay();
-
+        currentOperation = null
         currentScreenNumber.innerText += a;
+        firstOperand = currentScreenNumber.innerHTML;
 
         } else if (currentOperation === null) {
 
             currentScreenNumber.innerText += a;
-
             firstOperand = currentScreenNumber.innerHTML;
 
         } else if (currentScreenNumber.innerHTML === firstOperand) {
-            
+           
             resetDisplay();
-
             currentScreenNumber.innerText += a;
-
+            secondOperand = currentScreenNumber.innerHTML;
             previousScreenNumber.innerHTML = `${firstOperand} ${currentOperation}`;
 
         } else {
-
             currentScreenNumber.innerText += a;
-
             secondOperand = currentScreenNumber.innerHTML;
         }
     };
 
 
+    function display(a, b, c) {
+
+        
+        
+    }
+
+
     function resetDisplay() {
         currentScreenNumber.innerText = '';
+        previousScreenNumber.innerHTML = '';
+        operationPreform = false;
     }
 
     // Assign Operator
@@ -62,13 +71,24 @@ numberBtn.forEach((button) =>
     button.addEventListener('click', () => addOperator(button.textContent))
     );
 
+
     function addOperator(a) {
         if (currentOperation !== null) {
-            equation(firstOperand, currentOperation, secondOperand)
+            
+            currentOperation = a;
+            equation(firstOperand, currentOperation, secondOperand);
+            firstOperand = result;
+            currentScreenNumber.innerHTML = `${result}`
+            previousScreenNumber.innerHTML = `${firstOperand} ${currentOperation}`;
+
         } else {
             currentOperation = a;
+            previousScreenNumber.innerHTML = `${firstOperand} ${currentOperation}`
         }
     }
+
+
+    // 
 
 
 
@@ -76,8 +96,6 @@ numberBtn.forEach((button) =>
 
     function add(a , b) {
         result = a + b ;
-        currentScreenNumber.innerText = result;
-        previousScreenNumber.innerHTML = `${firstOperand} ${currentOperation} ${secondOperand} =`;
     }
 
     //Subtract
@@ -101,12 +119,21 @@ numberBtn.forEach((button) =>
 
     // Decides which function to run
 
+    equal.addEventListener('click', (e) => {
+        equation(firstOperand, currentOperation, secondOperand);
+        operationPreform = true;
+        previousScreenNumber.innerHTML = `${firstOperand} ${currentOperation} ${secondOperand} =`
+        currentScreenNumber.innerHTML = `${result}`
+
+    });
+
+
     function equation(a, c, b) {
 
         a = Number(a);
         b = Number(b);
 
-        switch(c) {
+        switch (c) {
             case "+":
                 add(a,b);
                 break;
@@ -125,18 +152,20 @@ numberBtn.forEach((button) =>
 
             default:
                 console.error("switch has broken");
-                break;
         }
     }
 
     //Clear
 
+    clearBtn.addEventListener('click', clearAll);
+
     function clearAll() {
+
         firstOperand = '';
         secondOperand = '';
         
         currentOperation = null;
-        
+
         operationPreform = false;
 
         currentScreenNumber.innerHTML = '0';
