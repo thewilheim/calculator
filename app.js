@@ -5,6 +5,9 @@ let secondOperand = '';
 
 let currentOperation = null;
 
+let equalPhase = false;
+
+let shouldReset = false;
 
 
 const equal = document.getElementById("equals");
@@ -26,43 +29,30 @@ numberBtn.forEach((button) =>
 
     function addNumber(a) {
 
-        if (currentScreenNumber.innerHTML === '0' || operationPreform === true) {   
-
+        if (currentScreenNumber.innerHTML === '0' || shouldReset) { 
         resetDisplay();
-        currentOperation = null
-        currentScreenNumber.innerText += a;
-        firstOperand = currentScreenNumber.innerHTML;
+        
+        } 
 
-        } else if (currentOperation === null) {
+        if (currentOperation == null) {
 
             currentScreenNumber.innerText += a;
-            firstOperand = currentScreenNumber.innerHTML;
+            firstOperand = currentScreenNumber.innerText;
 
-        } else if (currentScreenNumber.innerHTML === firstOperand) {
-           
-            resetDisplay();
-            currentScreenNumber.innerText += a;
-            secondOperand = currentScreenNumber.innerHTML;
-            previousScreenNumber.innerHTML = `${firstOperand} ${currentOperation}`;
-
+        } else if (currentScreenNumber.innerText === firstOperand.toString()){
+            shouldReset = true;
+            currentScreenNumber.innerText = 0;
         } else {
             currentScreenNumber.innerText += a;
-            secondOperand = currentScreenNumber.innerHTML;
+            secondOperand = currentScreenNumber.innerText;
         }
     };
 
 
-    function display(a, b, c) {
-
-        
-        
-    }
-
-
     function resetDisplay() {
         currentScreenNumber.innerText = '';
-        previousScreenNumber.innerHTML = '';
-        operationPreform = false;
+        shouldReset = false;
+
     }
 
     // Assign Operator
@@ -73,18 +63,27 @@ numberBtn.forEach((button) =>
 
 
     function addOperator(a) {
-        if (currentOperation !== null) {
-            
-            currentOperation = a;
-            equation(firstOperand, currentOperation, secondOperand);
-            firstOperand = result;
-            currentScreenNumber.innerHTML = `${result}`
-            previousScreenNumber.innerHTML = `${firstOperand} ${currentOperation}`;
 
-        } else {
-            currentOperation = a;
-            previousScreenNumber.innerHTML = `${firstOperand} ${currentOperation}`
-        }
+            if (currentOperation !== null) {
+
+                currentOperation = a;
+
+                equation(firstOperand, currentOperation, secondOperand);
+                
+                firstOperand = result;
+                
+                currentScreenNumber.innerHTML = firstOperand;
+
+                previousScreenNumber.innerHTML = `${firstOperand} ${currentOperation}`;
+
+                console.log(result);
+
+            } else {
+
+                currentOperation = a;
+                previousScreenNumber.innerHTML = `${firstOperand} ${currentOperation}`;
+
+            }
     }
 
 
@@ -112,7 +111,11 @@ numberBtn.forEach((button) =>
     //  Divide
 
     function divide(a , b) {
-        result = a / b ;
+        if(b > a) {
+            result = b / a ;
+        } else {
+            result = a / b ;
+        }
     }
 
 
@@ -121,9 +124,12 @@ numberBtn.forEach((button) =>
 
     equal.addEventListener('click', (e) => {
         equation(firstOperand, currentOperation, secondOperand);
-        operationPreform = true;
-        previousScreenNumber.innerHTML = `${firstOperand} ${currentOperation} ${secondOperand} =`
-        currentScreenNumber.innerHTML = `${result}`
+        
+        equalPhase = true;
+
+        currentScreenNumber.innerText = `${result}`;
+
+        previousScreenNumber.innerText = `${firstOperand} ${currentOperation} ${secondOperand} =`
 
     });
 
@@ -172,41 +178,5 @@ numberBtn.forEach((button) =>
         previousScreenNumber.innerHTML = '';
 
     }
-
-
-    // Extra effect
-
-    const tiltSettings = {
-        max: 15,
-        perspective: 2500,
-        scale: 1.05,
-    }
     
     
-    const cards = document.querySelectorAll(".numbers");
-    
-    cards.forEach(card => {
-        card.addEventListener("mousemove", cardMouseMove);
-        card.addEventListener("mouseleave", cardMouseLeave);
-    
-    });
-    
-    function cardMouseMove(event) {
-    
-        const card = event.currentTarget;
-        const cardWidth = card.offsetWidth;
-        const cardHeight = card.offsetHeight;
-        const centerX = card.offsetLeft + cardWidth / 2;
-        const centerY = card.offsetTop + cardHeight / 2;
-        const mouseX = event.clientX - centerX;
-        const mouseY = event.clientY - centerY;
-        const rotateX = ((-1)*tiltSettings.max*mouseY/(cardHeight/2)).toFixed(2);
-        const rotateY = ((1)*tiltSettings.max*mouseX/(cardWidth/2)).toFixed(2);
-    
-        card.style.transform = `perspective(${tiltSettings.perspective}px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(${tiltSettings.scale}, ${tiltSettings.scale}, ${tiltSettings.scale})`;
-    }
-    
-    
-    function cardMouseLeave(event) {
-        event.currentTarget.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-    }
