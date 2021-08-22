@@ -40,13 +40,20 @@ numberBtn.forEach((button) =>
             firstOperand = currentScreenNumber.innerText;
 
         } else if (currentScreenNumber.innerText === firstOperand.toString()){
-            shouldReset = true;
-            currentScreenNumber.innerText = 0;
+            resetDisplay();
+            currentScreenNumber.innerText += a;
+            secondOperand = currentScreenNumber.innerHTML;
+
         } else {
             currentScreenNumber.innerText += a;
             secondOperand = currentScreenNumber.innerText;
         }
     };
+
+
+
+
+
 
 
     function resetDisplay() {
@@ -87,7 +94,7 @@ numberBtn.forEach((button) =>
     }
 
 
-    // 
+    
 
 
 
